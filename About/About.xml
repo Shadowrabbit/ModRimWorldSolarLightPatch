@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+    <packageId>SR.ModRimworld.SolarLightPatch</packageId>
+    <name>[SR]Solar Light Patch</name>
+    <author>Shadowrabbit</author>
+    <supportedVersions>
+        <li>1.3</li>
+    </supportedVersions>
+    <loadAfter>
+        <li>Ludeon.RimWorld</li>
+        <li>Ludeon.RimWorld.Royalty</li>
+    </loadAfter>
+    <description>Adjust the solar light at night to make it faintly glow.</description>
+</ModMetaData>

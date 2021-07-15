@@ -1,0 +1,5 @@
+*.pdb
+Source/ModRimWorldSolarLightPatch/.idea/
+Source/ModRimWorldSolarLightPatch/obj/
+*.user
+Source/ModRimWorldSolarLightPatch/ModRimWorldSolarLightPatch.csproj
