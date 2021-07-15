@@ -19,24 +19,20 @@ namespace SR.ModRimWorld.SolarLightPatch
         private const float EndTime = 0.8f;
         private float _powerCost; //正常功率消耗
         private float _lowPowerCost; //低功耗消耗
-        private ColorInt glowColor; //正常功率光照
-        private ColorInt lowPowerGlowColor; //低功耗光照
+        private ColorInt _glowColor; //正常功率光照
+        private ColorInt _lowPowerGlowColor; //低功耗光照
         private bool _isInLowPowerMode; //模式
-        private bool? cacheMode; //模式缓存
+        private bool? _cacheMode; //模式缓存
 
-        public override void CompTick()
+        public override void CompTickRare()
         {
-            base.CompTick();
-            if (Find.TickManager.TicksGame % 600 != 0)
-            {
-                return;
-            }
+            base.CompTickRare();
             CalcMode();
-            if (cacheMode == _isInLowPowerMode)
+            if (_cacheMode == _isInLowPowerMode)
             {
                 return;
             }
-            cacheMode = _isInLowPowerMode;
+            _cacheMode = _isInLowPowerMode;
             UpdateGlow();
         }
 
@@ -57,8 +53,8 @@ namespace SR.ModRimWorld.SolarLightPatch
         {
             base.PostSpawnSetup(respawningAfterLoad);
             //初始化参数
-            glowColor = Props.glowColor;
-            lowPowerGlowColor = glowColor * 0.6f;
+            _glowColor = Props.glowColor;
+            _lowPowerGlowColor = _glowColor * 0.6f;
             var compPowerTrader = parent.GetComp<CompPowerTrader>();
             _powerCost = compPowerTrader.Props.basePowerConsumption;
             _lowPowerCost = _powerCost / 2;
@@ -76,10 +72,11 @@ namespace SR.ModRimWorld.SolarLightPatch
                 Log.Error($"[SR.ModRimWorld.SolarLightPatch]can't find CompPowerTrader in {parent.Label}");
                 return;
             }
-            compPowerTrader.Props.basePowerConsumption = _isInLowPowerMode ? _powerCost : _lowPowerCost;
+            //更新电力
+            compPowerTrader.Props.basePowerConsumption = _isInLowPowerMode ? _lowPowerCost : _powerCost;
+            compPowerTrader.SetUpPowerVars();
             //更新光照
-            Props.glowColor = _isInLowPowerMode ? glowColor : lowPowerGlowColor;
-            //重新绘制光照网格
+            Props.glowColor = _isInLowPowerMode ? _lowPowerGlowColor : _glowColor;
             UpdateLit(parent.Map);
         }
 
@@ -90,7 +87,7 @@ namespace SR.ModRimWorld.SolarLightPatch
         {
             //夜间低功率模式
             var num = GenLocalDate.DayPercent(parent);
-            _isInLowPowerMode = num <= StartTime && num >= EndTime;
+            _isInLowPowerMode = num < StartTime || num > EndTime;
         }
     }
 }
